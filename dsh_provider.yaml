@@ -1,0 +1,150 @@
+# Free Models provider block for DeepSeek Harness (dsh-llm-pi-ai)
+# 由 to_harness.py 从每日订阅自动生成；配合 Free Claude Code 本地代理(:8082)使用
+
+    # >>> free-models-provider >>>
+    free-models:
+      displayName: Free Models (daily)
+      api: openai-responses
+      baseURL: http://127.0.0.1:8082/v1
+      apiKeyEnv: FCC_DSH_API_KEY
+      retryPolicy:
+        mode: normal
+        maxRetries: 0
+      models:
+        - id: gemini/models/gemini-3.1-flash-lite
+          name: Gemini 3.1 Flash Lite (free)
+          contextWindow: 1048576
+          maxTokens: 65536
+        - id: open_router/openrouter/free
+          name: OpenRouter Free (free)
+          contextWindow: 262144
+          maxTokens: 65536
+        - id: github_models/openai/gpt-4.1
+          name: GitHub Models GPT-4.1 (free)
+          contextWindow: 262144
+          maxTokens: 65536
+        - id: groq/llama-3.3-70b-versatile
+          name: Groq Llama 3.3 70B (free)
+          contextWindow: 131072
+          maxTokens: 32768
+        - id: nvidia_nim/nvidia/nemotron-3-super-120b-a12b
+          name: NVIDIA NIM Nemotron 3 Super (free)
+          contextWindow: 200000
+          maxTokens: 65536
+        - id: zai_api/glm-4.7-flash
+          name: GLM-4.7-Flash (free, 200K ctx)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/cognitivecomputations-dolphin-mistral-24b-venice-edition-free
+          name: cognitivecomputations/dolphin-mistral-24b-venice-edition:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/deepseek-deepseek-v4-flash-free
+          name: deepseek/deepseek-v4-flash:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/google-gemma-4-26b-a4b-it-free
+          name: google/gemma-4-26b-a4b-it:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/google-gemma-4-31b-it-free
+          name: google/gemma-4-31b-it:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/liquid-lfm-2-5-1-2b-instruct-free
+          name: liquid/lfm-2.5-1.2b-instruct:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/liquid-lfm-2-5-1-2b-thinking-free
+          name: liquid/lfm-2.5-1.2b-thinking:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/minimax-minimax-m2-5-free
+          name: minimax/minimax-m2.5:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/moonshotai-kimi-k2-6-free
+          name: moonshotai/kimi-k2.6:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/nvidia-nemotron-3-nano-30b-a3b-free
+          name: nvidia/nemotron-3-nano-30b-a3b:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/nvidia-nemotron-3-nano-omni-30b-a3b-reasoning-free
+          name: nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/nvidia-nemotron-3-super-120b-a12b-free
+          name: nvidia/nemotron-3-super-120b-a12b:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/nvidia-nemotron-nano-12b-v2-vl-free
+          name: nvidia/nemotron-nano-12b-v2-vl:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/nvidia-nemotron-nano-9b-v2-free
+          name: nvidia/nemotron-nano-9b-v2:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/openai-gpt-oss-120b-free
+          name: openai/gpt-oss-120b:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/openai-gpt-oss-20b-free
+          name: openai/gpt-oss-20b:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/poolside-laguna-m-1-free
+          name: poolside/laguna-m.1:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/poolside-laguna-xs-2-free
+          name: poolside/laguna-xs.2:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/qwen-qwen3-coder-free
+          name: qwen/qwen3-coder:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/qwen-qwen3-next-80b-a3b-instruct-free
+          name: qwen/qwen3-next-80b-a3b-instruct:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/z-ai-glm-4-5-air-free
+          name: z-ai/glm-4.5-air:free (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/various-open-models
+          name: Various open models (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/open-and-proprietary-mistral-models
+          name: Open and Proprietary Mistral models (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/github-models
+          name: GitHub Models (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/dependent-on-copilot-subscription-tier--free-pro-pro--business-enterprise-
+          name: Dependent on Copilot subscription tier (Free/Pro/Pro+/Business/Enterprise) (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/any-supported-model---pay-by-compute-time
+          name: Any supported model - pay by compute time (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/alibaba-cloud--international--model-studio
+          name: Alibaba Cloud (International) Model Studio (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/various-open-and-proprietary-qwen-models
+          name: Various open and proprietary Qwen models (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+        - id: freeapi/scaleway-generative-apis
+          name: Scaleway Generative APIs (free-models)
+          contextWindow: 200000
+          maxTokens: 32768
+    # <<< free-models-provider <<<

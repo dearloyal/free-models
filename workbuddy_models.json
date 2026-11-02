@@ -1,0 +1,347 @@
+{
+  "models": [
+    {
+      "id": "proxy/cognitivecomputations-dolphin-mistral-24b-venice-edition-free",
+      "name": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/deepseek-deepseek-v4-flash-free",
+      "name": "deepseek/deepseek-v4-flash:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/google-gemma-4-26b-a4b-it-free",
+      "name": "google/gemma-4-26b-a4b-it:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/google-gemma-4-31b-it-free",
+      "name": "google/gemma-4-31b-it:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/liquid-lfm-2-5-1-2b-instruct-free",
+      "name": "liquid/lfm-2.5-1.2b-instruct:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/liquid-lfm-2-5-1-2b-thinking-free",
+      "name": "liquid/lfm-2.5-1.2b-thinking:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/minimax-minimax-m2-5-free",
+      "name": "minimax/minimax-m2.5:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/moonshotai-kimi-k2-6-free",
+      "name": "moonshotai/kimi-k2.6:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/nvidia-nemotron-3-nano-30b-a3b-free",
+      "name": "nvidia/nemotron-3-nano-30b-a3b:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/nvidia-nemotron-3-nano-omni-30b-a3b-reasoning-free",
+      "name": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/nvidia-nemotron-3-super-120b-a12b-free",
+      "name": "nvidia/nemotron-3-super-120b-a12b:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/nvidia-nemotron-nano-12b-v2-vl-free",
+      "name": "nvidia/nemotron-nano-12b-v2-vl:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/nvidia-nemotron-nano-9b-v2-free",
+      "name": "nvidia/nemotron-nano-9b-v2:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/openai-gpt-oss-120b-free",
+      "name": "openai/gpt-oss-120b:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/openai-gpt-oss-20b-free",
+      "name": "openai/gpt-oss-20b:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/poolside-laguna-m-1-free",
+      "name": "poolside/laguna-m.1:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/poolside-laguna-xs-2-free",
+      "name": "poolside/laguna-xs.2:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/qwen-qwen3-coder-free",
+      "name": "qwen/qwen3-coder:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/qwen-qwen3-next-80b-a3b-instruct-free",
+      "name": "qwen/qwen3-next-80b-a3b-instruct:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/z-ai-glm-4-5-air-free",
+      "name": "z-ai/glm-4.5-air:free (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/various-open-models",
+      "name": "Various open models (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/open-and-proprietary-mistral-models",
+      "name": "Open and Proprietary Mistral models (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/github-models",
+      "name": "GitHub Models (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/dependent-on-copilot-subscription-tier--free-pro-pro--business-enterprise-",
+      "name": "Dependent on Copilot subscription tier (Free/Pro/Pro+/Business/Enterprise) (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/various-open-models",
+      "name": "Various open models (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/any-supported-model---pay-by-compute-time",
+      "name": "Any supported model - pay by compute time (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/various-open-models",
+      "name": "Various open models (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/various-open-models",
+      "name": "Various open models (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/alibaba-cloud--international--model-studio",
+      "name": "Alibaba Cloud (International) Model Studio (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/various-open-and-proprietary-qwen-models",
+      "name": "Various open and proprietary Qwen models (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    },
+    {
+      "id": "proxy/scaleway-generative-apis",
+      "name": "Scaleway Generative APIs (free-models·api)",
+      "vendor": "Custom",
+      "url": "${WORKBUDDY_PROXY_URL:-http://127.0.0.1:8082/v1}",
+      "apiKey": "freecc",
+      "supportsToolCall": true,
+      "supportsImages": false,
+      "buddyBridgeOwner": "free-models"
+    }
+  ],
+  "availableModels": [
+    "proxy/cognitivecomputations-dolphin-mistral-24b-venice-edition-free",
+    "proxy/deepseek-deepseek-v4-flash-free",
+    "proxy/google-gemma-4-26b-a4b-it-free",
+    "proxy/google-gemma-4-31b-it-free",
+    "proxy/liquid-lfm-2-5-1-2b-instruct-free",
+    "proxy/liquid-lfm-2-5-1-2b-thinking-free",
+    "proxy/minimax-minimax-m2-5-free",
+    "proxy/moonshotai-kimi-k2-6-free",
+    "proxy/nvidia-nemotron-3-nano-30b-a3b-free",
+    "proxy/nvidia-nemotron-3-nano-omni-30b-a3b-reasoning-free",
+    "proxy/nvidia-nemotron-3-super-120b-a12b-free",
+    "proxy/nvidia-nemotron-nano-12b-v2-vl-free",
+    "proxy/nvidia-nemotron-nano-9b-v2-free",
+    "proxy/openai-gpt-oss-120b-free",
+    "proxy/openai-gpt-oss-20b-free",
+    "proxy/poolside-laguna-m-1-free",
+    "proxy/poolside-laguna-xs-2-free",
+    "proxy/qwen-qwen3-coder-free",
+    "proxy/qwen-qwen3-next-80b-a3b-instruct-free",
+    "proxy/z-ai-glm-4-5-air-free",
+    "proxy/various-open-models",
+    "proxy/open-and-proprietary-mistral-models",
+    "proxy/github-models",
+    "proxy/dependent-on-copilot-subscription-tier--free-pro-pro--business-enterprise-",
+    "proxy/various-open-models",
+    "proxy/any-supported-model---pay-by-compute-time",
+    "proxy/various-open-models",
+    "proxy/various-open-models",
+    "proxy/alibaba-cloud--international--model-studio",
+    "proxy/various-open-and-proprietary-qwen-models",
+    "proxy/scaleway-generative-apis"
+  ]
+}
