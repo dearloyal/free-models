@@ -263,7 +263,7 @@ def build_subscription(entries):
         })
     return {
         "name": "免费模型",
-        "source": "dearloyal/CS",
+        "source": "dearloyal/free-models",
         "count": len(sites),
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "sites": sites,
