@@ -1,0 +1,35 @@
+# 免费模型订阅 · 可调配置（改这里即可，无需动代码）
+days_lookback: 2          # 只看最近 N 天新发布的模型
+max_per_source: 80        # 每源最多抓取条数
+
+# 许可证白名单（含这些才保留；空列表=不限制）
+license_allow:
+  - apache-2.0
+  - mit
+  - bsd
+  - cc-by
+  - cc-by-4.0
+  - openrail
+  - other
+# 许可证黑名单（命中即丢弃，优先级更高）
+license_block:
+  - cc-by-nc
+  - cc-by-nc-4.0
+  - cc-by-nc-sa
+  - non-commercial
+
+# 数据源开关（如需关闭某项，置 false）
+# sources:
+#   huggingface: true
+#   github: true
+#   rss: true
+#   freelist: true
+
+rss_feeds:
+  - "https://huggingface.co/blog/feed.xml"
+  - "https://github.com/atomlong/free-llm-api-resources/commits/main.atom"
+
+freelist_raw:
+  - "https://raw.githubusercontent.com/atomlong/free-llm-api-resources/main/README.md"
+
+github_query: 'LLM OR "large language model" OR diffusion OR "speech recognition" OR multimodal'

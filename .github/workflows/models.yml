@@ -1,0 +1,38 @@
+name: 免费模型订阅
+
+# 与现有 pipeline.yml 平行：每天定时抓取最新免费模型，更新 免费模型.json 订阅链接
+on:
+  schedule:
+    - cron: '0 16 * * *'        # 每天 北京时间 00:00（UTC 16:00）
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: 安装依赖
+        run: pip install requests pyyaml
+      - name: 抓取并生成 免费模型.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/free_models.py
+      - name: 提交并推送
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add 免费模型.json 免费模型.md
+          if git diff --cached --quiet; then
+            echo "无变化，跳过提交"
+          else
+            git commit -m "models: 更新 $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git pull --rebase origin main || true
+            git push
+          fi
