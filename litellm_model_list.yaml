@@ -1,0 +1,199 @@
+# LiteLLM / OpenAI 兼容 harness 模型清单模板
+# 把 base_url + api_key 补全后，harness 即可调用这些免费模型
+model_list:
+  # cognitivecomputations/dolphin-mistral-24b-venice-edition:free  -> 免费档说明: https://openrouter.ai/cognitivecomputations/dolphin-mistral-24b-venice-edition:free
+  - model_name: cognitivecomputations/dolphin-mistral-24b-venice-edition:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/COGNITIVECOMPUTATIONS/DOLPHIN-MISTRAL-24B-VENICE-EDITION:FREE_KEY
+
+  # deepseek/deepseek-v4-flash:free  -> 免费档说明: https://openrouter.ai/deepseek/deepseek-v4-flash:free
+  - model_name: deepseek/deepseek-v4-flash:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/DEEPSEEK/DEEPSEEK-V4-FLASH:FREE_KEY
+
+  # google/gemma-4-26b-a4b-it:free  -> 免费档说明: https://openrouter.ai/google/gemma-4-26b-a4b-it:free
+  - model_name: google/gemma-4-26b-a4b-it:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/GOOGLE/GEMMA-4-26B-A4B-IT:FREE_KEY
+
+  # google/gemma-4-31b-it:free  -> 免费档说明: https://openrouter.ai/google/gemma-4-31b-it:free
+  - model_name: google/gemma-4-31b-it:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/GOOGLE/GEMMA-4-31B-IT:FREE_KEY
+
+  # liquid/lfm-2.5-1.2b-instruct:free  -> 免费档说明: https://openrouter.ai/liquid/lfm-2.5-1.2b-instruct:free
+  - model_name: liquid/lfm-2.5-1.2b-instruct:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/LIQUID/LFM-2.5-1.2B-INSTRUCT:FREE_KEY
+
+  # liquid/lfm-2.5-1.2b-thinking:free  -> 免费档说明: https://openrouter.ai/liquid/lfm-2.5-1.2b-thinking:free
+  - model_name: liquid/lfm-2.5-1.2b-thinking:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/LIQUID/LFM-2.5-1.2B-THINKING:FREE_KEY
+
+  # minimax/minimax-m2.5:free  -> 免费档说明: https://openrouter.ai/minimax/minimax-m2.5:free
+  - model_name: minimax/minimax-m2.5:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/MINIMAX/MINIMAX-M2.5:FREE_KEY
+
+  # moonshotai/kimi-k2.6:free  -> 免费档说明: https://openrouter.ai/moonshotai/kimi-k2.6:free
+  - model_name: moonshotai/kimi-k2.6:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/MOONSHOTAI/KIMI-K2.6:FREE_KEY
+
+  # nvidia/nemotron-3-nano-30b-a3b:free  -> 免费档说明: https://openrouter.ai/nvidia/nemotron-3-nano-30b-a3b:free
+  - model_name: nvidia/nemotron-3-nano-30b-a3b:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/NVIDIA/NEMOTRON-3-NANO-30B-A3B:FREE_KEY
+
+  # nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free  -> 免费档说明: https://openrouter.ai/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free
+  - model_name: nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/NVIDIA/NEMOTRON-3-NANO-OMNI-30B-A3B-REASONING:FREE_KEY
+
+  # nvidia/nemotron-3-super-120b-a12b:free  -> 免费档说明: https://openrouter.ai/nvidia/nemotron-3-super-120b-a12b:free
+  - model_name: nvidia/nemotron-3-super-120b-a12b:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/NVIDIA/NEMOTRON-3-SUPER-120B-A12B:FREE_KEY
+
+  # nvidia/nemotron-nano-12b-v2-vl:free  -> 免费档说明: https://openrouter.ai/nvidia/nemotron-nano-12b-v2-vl:free
+  - model_name: nvidia/nemotron-nano-12b-v2-vl:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/NVIDIA/NEMOTRON-NANO-12B-V2-VL:FREE_KEY
+
+  # nvidia/nemotron-nano-9b-v2:free  -> 免费档说明: https://openrouter.ai/nvidia/nemotron-nano-9b-v2:free
+  - model_name: nvidia/nemotron-nano-9b-v2:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/NVIDIA/NEMOTRON-NANO-9B-V2:FREE_KEY
+
+  # openai/gpt-oss-120b:free  -> 免费档说明: https://openrouter.ai/openai/gpt-oss-120b:free
+  - model_name: openai/gpt-oss-120b:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/OPENAI/GPT-OSS-120B:FREE_KEY
+
+  # openai/gpt-oss-20b:free  -> 免费档说明: https://openrouter.ai/openai/gpt-oss-20b:free
+  - model_name: openai/gpt-oss-20b:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/OPENAI/GPT-OSS-20B:FREE_KEY
+
+  # poolside/laguna-m.1:free  -> 免费档说明: https://openrouter.ai/poolside/laguna-m.1:free
+  - model_name: poolside/laguna-m.1:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/POOLSIDE/LAGUNA-M.1:FREE_KEY
+
+  # poolside/laguna-xs.2:free  -> 免费档说明: https://openrouter.ai/poolside/laguna-xs.2:free
+  - model_name: poolside/laguna-xs.2:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/POOLSIDE/LAGUNA-XS.2:FREE_KEY
+
+  # qwen/qwen3-coder:free  -> 免费档说明: https://openrouter.ai/qwen/qwen3-coder:free
+  - model_name: qwen/qwen3-coder:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/QWEN/QWEN3-CODER:FREE_KEY
+
+  # qwen/qwen3-next-80b-a3b-instruct:free  -> 免费档说明: https://openrouter.ai/qwen/qwen3-next-80b-a3b-instruct:free
+  - model_name: qwen/qwen3-next-80b-a3b-instruct:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/QWEN/QWEN3-NEXT-80B-A3B-INSTRUCT:FREE_KEY
+
+  # z-ai/glm-4.5-air:free  -> 免费档说明: https://openrouter.ai/z-ai/glm-4.5-air:free
+  - model_name: z-ai/glm-4.5-air:free
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/Z-AI/GLM-4.5-AIR:FREE_KEY
+
+  # Various open models  -> 免费档说明: https://novita.ai/models
+  - model_name: Various open models
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/VARIOUS_OPEN_MODELS_KEY
+
+  # Open and Proprietary Mistral models  -> 免费档说明: https://docs.mistral.ai/getting-started/models/models_overview/
+  - model_name: Open and Proprietary Mistral models
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/OPEN_AND_PROPRIETARY_MISTRAL_MODELS_KEY
+
+  # GitHub Models  -> 免费档说明: https://github.com/marketplace/models
+  - model_name: GitHub Models
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/GITHUB_MODELS_KEY
+
+  # Dependent on Copilot subscription tier (Free/Pro/Pro+/Business/Enterprise)  -> 免费档说明: https://docs.github.com/en/github-models/prototyping-with-ai-models#rate-limits
+  - model_name: Dependent on Copilot subscription tier (Free/Pro/Pro+/Business/Enterprise)
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/DEPENDENT_ON_COPILOT_SUBSCRIPTION_TIER_(FREE/PRO/PRO+/BUSINESS/ENTERPRISE)_KEY
+
+  # Any supported model - pay by compute time  -> 免费档说明: https://www.baseten.co/library/
+  - model_name: Any supported model - pay by compute time
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/ANY_SUPPORTED_MODEL_-_PAY_BY_COMPUTE_TIME_KEY
+
+  # Alibaba Cloud (International) Model Studio  -> 免费档说明: https://bailian.console.alibabacloud.com/
+  - model_name: Alibaba Cloud (International) Model Studio
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/ALIBABA_CLOUD_(INTERNATIONAL)_MODEL_STUDIO_KEY
+
+  # Various open and proprietary Qwen models  -> 免费档说明: https://www.alibabacloud.com/en/product/modelstudio
+  - model_name: Various open and proprietary Qwen models
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/VARIOUS_OPEN_AND_PROPRIETARY_QWEN_MODELS_KEY
+
+  # Scaleway Generative APIs  -> 免费档说明: https://console.scaleway.com/generative-api/models
+  - model_name: Scaleway Generative APIs
+    litellm_params:
+      model: openai/<该提供方上的模型名>
+      api_base: <填该提供方的 OpenAI 兼容 base_url>
+      api_key: os.environ/SCALEWAY_GENERATIVE_APIS_KEY
+
