@@ -1,80 +1,9 @@
 {
   "name": "免费模型",
   "source": "dearloyal/free-models",
-  "count": 37,
-  "updated_at": "2026-11-02T23:38:14.294968+00:00",
+  "count": 32,
+  "updated_at": "2026-11-03T00:14:03.102254+00:00",
   "sites": [
-    {
-      "key": "gh:Balanov/uncut",
-      "name": "Balanov/uncut",
-      "api": "https://github.com/Balanov/uncut",
-      "type": 1,
-      "searchable": 0,
-      "quickSearch": 0,
-      "filterable": 0,
-      "detail": "https://github.com/Balanov/uncut",
-      "_license": "MIT",
-      "_category": "llm",
-      "_source": "github",
-      "_tags": [
-        "agent-harness",
-        "cli",
-        "coding-agent",
-        "go",
-        "headless",
-        "llm",
-        "local-models"
-      ],
-      "_description": "The lossless, headless coding agent harness. One 7 MB static binary, four tools, plain stdin/stdout, no silent cuts."
-    },
-    {
-      "key": "gh:SAOS-3624/dsh-see-now",
-      "name": "SAOS-3624/dsh-see-now",
-      "api": "https://github.com/SAOS-3624/dsh-see-now",
-      "type": 1,
-      "searchable": 0,
-      "quickSearch": 0,
-      "filterable": 0,
-      "detail": "https://github.com/SAOS-3624/dsh-see-now",
-      "_license": "Apache-2.0",
-      "_category": "llm",
-      "_source": "github",
-      "_tags": [
-        "ai-agent",
-        "dsh",
-        "dsh-plugin",
-        "ffmpeg",
-        "llm",
-        "realtime",
-        "screen-capture",
-        "token-efficient"
-      ],
-      "_description": "让 AI 实时看见你的屏幕：按变化量筛选帧、多帧拼进一张图，静止画面几乎不花 token"
-    },
-    {
-      "key": "gh:Jumbomuffin777/Frontier-UI",
-      "name": "Jumbomuffin777/Frontier-UI",
-      "api": "https://github.com/Jumbomuffin777/Frontier-UI",
-      "type": 1,
-      "searchable": 0,
-      "quickSearch": 0,
-      "filterable": 0,
-      "detail": "https://github.com/Jumbomuffin777/Frontier-UI",
-      "_license": "MIT",
-      "_category": "llm",
-      "_source": "github",
-      "_tags": [
-        "ai-tools",
-        "artcraft",
-        "artificial-intelligence",
-        "generative-ai",
-        "llm",
-        "local-ai",
-        "local-llm",
-        "open-webui"
-      ],
-      "_description": "ChatGPT-style generative UI for Open WebUI: photo galleries, live maps with real routes, multi-day trips, budgets, calculators, live weather & stocks, link prev"
-    },
     {
       "key": "gh:weir36/novel-config-copilot",
       "name": "weir36/novel-config-copilot",
@@ -97,55 +26,11 @@
         "rag",
         "react-agent"
       ],
-      "_description": "网文平台资源配置决策助手：GraphRAG 两阶段检索 + ReAct Agent + 规则引擎兜底，方案合法率 60%→100%"
-    },
-    {
-      "key": "gh:DevDock-AI/Speedy",
-      "name": "DevDock-AI/Speedy",
-      "api": "https://github.com/DevDock-AI/Speedy",
-      "type": 1,
-      "searchable": 0,
-      "quickSearch": 0,
-      "filterable": 0,
-      "detail": "https://github.com/DevDock-AI/Speedy",
-      "_license": "MIT",
-      "_category": "llm",
-      "_source": "github",
-      "_tags": [
-        "cuda",
-        "inference",
-        "llama",
-        "llama-cpp",
-        "llm",
-        "long-context",
-        "mixture-of-experts",
-        "multi-gpu"
-      ],
-      "_description": "Qwen3.8-Flash-Next (125B MoE) up to 1M context on one or two RTX cards (tuned on 3080 10gb).   A measured, tuned and benchmarked fork of Strata."
-    },
-    {
-      "key": "gh:mazulo/leis-mcp",
-      "name": "mazulo/leis-mcp",
-      "api": "https://github.com/mazulo/leis-mcp",
-      "type": 1,
-      "searchable": 0,
-      "quickSearch": 0,
-      "filterable": 0,
-      "detail": "https://github.com/mazulo/leis-mcp",
-      "_license": "MIT",
-      "_category": "llm",
-      "_source": "github",
-      "_tags": [
-        "ai-assistant",
-        "anthropic",
-        "brasil",
-        "brazil",
-        "claude",
-        "claude-code",
-        "claude-desktop",
-        "direito"
-      ],
-      "_description": "Servidor MCP para buscar e citar a legislação brasileira no Claude e em qualquer assistente de IA: texto exato de 1,2 milhão de normas (CF, CLT, CDC, Código Civ"
+      "_description": "网文平台资源配置决策助手：GraphRAG 两阶段检索 + ReAct Agent + 规则引擎兜底，方案合法率 60%→100%",
+      "_wb": false,
+      "_dsh": false,
+      "_wb_via": "",
+      "_dsh_via": ""
     },
     {
       "key": "freelist:https://openrouter.ai/cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
@@ -160,7 +45,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/deepseek/deepseek-v4-flash:free",
@@ -175,7 +64,11 @@
       "_category": "llm",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/google/gemma-4-26b-a4b-it:free",
@@ -190,7 +83,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/google/gemma-4-31b-it:free",
@@ -205,7 +102,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/liquid/lfm-2.5-1.2b-instruct:free",
@@ -220,7 +121,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/liquid/lfm-2.5-1.2b-thinking:free",
@@ -235,7 +140,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/minimax/minimax-m2.5:free",
@@ -250,7 +159,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/moonshotai/kimi-k2.6:free",
@@ -265,7 +178,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/nvidia/nemotron-3-nano-30b-a3b:free",
@@ -280,7 +197,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
@@ -295,7 +216,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/nvidia/nemotron-3-super-120b-a12b:free",
@@ -310,7 +235,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/nvidia/nemotron-nano-12b-v2-vl:free",
@@ -325,7 +254,11 @@
       "_category": "multimodal",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/nvidia/nemotron-nano-9b-v2:free",
@@ -340,7 +273,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/openai/gpt-oss-120b:free",
@@ -355,7 +292,11 @@
       "_category": "llm",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/openai/gpt-oss-20b:free",
@@ -370,7 +311,11 @@
       "_category": "llm",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/poolside/laguna-m.1:free",
@@ -385,7 +330,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/poolside/laguna-xs.2:free",
@@ -400,7 +349,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/qwen/qwen3-coder:free",
@@ -415,7 +368,11 @@
       "_category": "llm",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/qwen/qwen3-next-80b-a3b-instruct:free",
@@ -430,7 +387,11 @@
       "_category": "llm",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://openrouter.ai/z-ai/glm-4.5-air:free",
@@ -445,7 +406,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://build.nvidia.com/models",
@@ -460,7 +425,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://docs.mistral.ai/getting-started/models/models_overview/",
@@ -475,7 +444,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://github.com/marketplace/models",
@@ -490,7 +463,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://docs.github.com/en/github-models/prototyping-with-ai-models#rate-limits",
@@ -505,7 +482,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://fireworks.ai/models",
@@ -520,7 +501,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://www.baseten.co/library/",
@@ -535,7 +520,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://tokenfactory.nebius.com/models",
@@ -550,7 +539,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://novita.ai/models",
@@ -565,7 +558,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://bailian.console.alibabacloud.com/",
@@ -580,7 +577,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://www.alibabacloud.com/en/product/modelstudio",
@@ -595,7 +596,11 @@
       "_category": "llm",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     },
     {
       "key": "freelist:https://console.scaleway.com/generative-api/models",
@@ -610,7 +615,11 @@
       "_category": "other",
       "_source": "freelist",
       "_tags": [],
-      "_description": "来自免费模型清单"
+      "_description": "来自免费模型清单",
+      "_wb": true,
+      "_dsh": true,
+      "_wb_via": "本地代理",
+      "_dsh_via": "FCC 代理"
     }
   ]
 }

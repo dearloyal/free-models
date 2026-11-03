@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-free-models-importer —— 类 ow-bridge 的一键导入器（本地 Web 版）
+free-models-importer —— 一键导入器（本地 Web 版）
 
 启动: python3 app.py
 打开: http://localhost:8088
 
 功能:
-  - 自动拉取每日订阅(免费模型.json)
-  - 模型卡片: 许可证/类型/来源标签 + 勾选
-  - 一键导入 WorkBuddy(~/.workbuddy/models.json) 或 DSH(~/.dsh/settings.yaml)
-  - 可配置代理/Ollama 地址, 幂等导入(只动本工具标记条目)
-参考: ow-bridge(写 models.json) / dsh-free-models(注入 provider 块)
+  - 每天自动刷新的免费模型订阅(免费模型.json)
+  - 每个模型标明: WorkBuddy 能否用 / DSH 能否用 + 走哪种本地传输
+  - 卡片上直接「导入到 WorkBuddy / 导入到 DSH」一键导入
+  - 可按平台筛选 / 勾选批量导入, 幂等(只动本工具标记条目)
 """
 import json
 import os
@@ -73,6 +72,18 @@ def models_list():
     data = fetch_subscription()
     out = []
     for s in data.get("sites", []):
+        wb, dsh = s.get("_wb"), s.get("_dsh")
+        if wb is None or dsh is None:  # 旧订阅未带分类字段时回退推算
+            src, url = s.get("_source", ""), s.get("api", "")
+            if src == "huggingface" and "huggingface.co/" in url:
+                wb, dsh, wbv, dshv = True, True, "Ollama", "Ollama"
+            elif src == "freelist":
+                wb, dsh, wbv, dshv = True, True, "本地代理", "FCC 代理"
+            else:
+                wb, dsh, wbv, dshv = False, False, "", ""
+        else:
+            wb, dsh = bool(wb), bool(dsh)
+            wbv, dshv = s.get("_wb_via", ""), s.get("_dsh_via", "")
         out.append({
             "id": s["key"],
             "name": s.get("name", ""),
@@ -83,7 +94,9 @@ def models_list():
             "tags": s.get("_tags", []),
             "description": (s.get("_description") or "")[:160],
             "endpoint": s.get("api", ""),
-            "importable": s.get("_source") in ("huggingface", "freelist"),
+            "wb": wb, "dsh": dsh,
+            "wb_via": wbv, "dsh_via": dshv,
+            "importable": wb or dsh,
         })
     return out
 
@@ -122,13 +135,11 @@ def import_workbuddy(ids, cfg):
         kept = []
     merged = kept + entries
     Path(target).write_text(json.dumps({"models": merged, "availableModels": [m["id"] for m in merged]},
-                                        ensure_ascii=False, indent=2), encoding="utf-8")
+                                       ensure_ascii=False, indent=2), encoding="utf-8")
     return {"added": len(entries), "kept_other": len(kept), "path": target}
 
 
-def import_dsh(cfg):
-    """注入 free-models provider 块(FCC 代理 schema), 含订阅里发现的新免费 provider。"""
-    data = fetch_subscription()
+def _default_fcc_models(data):
     models = [
         ("gemini/models/gemini-3.1-flash-lite", "Gemini 3.1 Flash Lite (free)", 1048576, 65536),
         ("open_router/openrouter/free", "OpenRouter Free (free)", 262144, 65536),
@@ -144,38 +155,31 @@ def import_dsh(cfg):
             if mid not in seen:
                 seen.add(mid)
                 models.append((mid, f"{s['name']} (free-models)", 200000, 32768))
-    lines = [
-        "    # >>> free-models-provider >>>",
-        "    free-models:",
-        "      displayName: Free Models (daily)",
-        "      api: openai-responses",
-        f"      baseURL: http://127.0.0.1:{cfg['dsh_port']}/v1",
-        "      apiKeyEnv: FCC_DSH_API_KEY",
-        "      retryPolicy:",
-        "        mode: normal",
-        "        maxRetries: 0",
-        "      models:",
-    ]
-    for mid, name, ctx, mtok in models:
-        lines += [f"        - id: {mid}", f"          name: {name}",
-                  f"          contextWindow: {ctx}", f"          maxTokens: {mtok}"]
-    lines.append("    # <<< free-models-provider <<<")
-    block = "\n".join(lines)
+    return models
 
+
+def _inject_dsh_provider(cfg, key, display, api, base_url, models, marker):
     dsh_home = os.environ.get("DSH_HOME", os.path.expanduser("~/.dsh"))
     settings = os.path.join(dsh_home, "settings.yaml")
     os.makedirs(dsh_home, exist_ok=True)
-    marker = "free-models-provider"
+    lines = [f"    # >>> {marker} >>>", f"    {key}:", f"      displayName: {display}",
+             f"      api: {api}", f"      baseURL: {base_url}", "      apiKeyEnv: FCC_DSH_API_KEY",
+             "      retryPolicy:", "        mode: normal", "        maxRetries: 0", "      models:"]
+    for mid, name, ctx, mtok in models:
+        lines += [f"        - id: {mid}", f"          name: {name}",
+                  f"          contextWindow: {ctx}", f"          maxTokens: {mtok}"]
+    lines.append(f"    # <<< {marker} <<<")
+    block = "\n".join(lines)
     if os.path.exists(settings) and marker in Path(settings).read_text(encoding="utf-8"):
-        return {"status": "skipped", "path": settings, "models": len(models)}
-    bf = HERE / ".dsh_block.tmp"
+        return "skipped"
+    bf = HERE / f".dsh_{abs(hash(marker))}.tmp"
     bf.write_text(block + "\n", encoding="utf-8")
     if not os.path.exists(settings) or "llm-pi-ai:" not in Path(settings).read_text(encoding="utf-8"):
         head = Path(settings).read_text(encoding="utf-8") if os.path.exists(settings) else ""
         Path(settings + ".tmp").write_text(head + "\nllm-pi-ai:\n  providers:\n" + block + "\n", encoding="utf-8")
     else:
         src = Path(settings).read_text(encoding="utf-8")
-        out, done, ins = [], False, False
+        out, done = [], False
         for line in src.splitlines():
             out.append(line)
             if line.startswith("  providers:") and not done:
@@ -184,7 +188,24 @@ def import_dsh(cfg):
         Path(settings + ".tmp").write_text("\n".join(out) + "\n", encoding="utf-8")
     os.replace(settings + ".tmp", settings)
     bf.unlink(missing_ok=True)
-    return {"status": "injected", "path": settings, "models": len(models)}
+    return "injected"
+
+
+def import_dsh(ids, cfg):
+    data = fetch_subscription()
+    sites = {s["key"]: s for s in data.get("sites", [])}
+    chosen = [sites[i] for i in ids if i in sites]
+    hf = [s for s in chosen if s.get("_source") == "huggingface" and "huggingface.co/" in s.get("api", "")]
+    res = {}
+    res["fcc"] = _inject_dsh_provider(
+        cfg, "free-models", "Free Models (daily, API)", "openai-responses",
+        f"http://127.0.0.1:{cfg['dsh_port']}/v1", _default_fcc_models(data), "free-models-provider")
+    if hf:
+        ollama_models = [(f"ollama/{s['name'].split('/')[-1]}", f"{s['name']} (HF·Ollama)", 128000, 4096) for s in hf]
+        res["ollama"] = _inject_dsh_provider(
+            cfg, "free-models-ollama", "Free Models (HF via Ollama)", "openai",
+            cfg["ollama_url"], ollama_models, "free-models-ollama-provider")
+    return res
 
 
 # ----------------------------- 路由 -----------------------------
@@ -231,11 +252,11 @@ def api_import():
     cfg = load_config()
     try:
         if target == "workbuddy":
-            res = import_workbuddy(ids, cfg)
-            return jsonify({"ok": True, "target": target, **res})
+            r = import_workbuddy(ids, cfg)
+            return jsonify({"ok": True, "target": target, **r})
         elif target == "dsh":
-            res = import_dsh(cfg)
-            return jsonify({"ok": True, "target": target, **res})
+            r = import_dsh(ids, cfg)
+            return jsonify({"ok": True, "target": target, **r})
         return jsonify({"ok": False, "error": "unknown target"}), 400
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)}), 500
@@ -246,16 +267,16 @@ INDEX_HTML = """<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>免费模型一键导入器</title>
 <style>
-:root{--bg:#0b1220;--card:#16233b;--line:#2a3a55;--accent:#38bdf8;--ok:#34d399;--warn:#fbbf24;--text:#e6edf6;--muted:#9fb0c3}
+:root{--bg:#0b1220;--card:#16233b;--line:#2a3a55;--accent:#38bdf8;--ok:#34d399;--off:#5b6b80;--text:#e6edf6;--muted:#9fb0c3}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}
 header{padding:18px 22px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
 h1{font-size:18px;margin:0} .spacer{flex:1}
 button{cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--text);padding:8px 14px;border-radius:9px;font-size:14px}
 button.primary{background:var(--accent);color:#04263a;border-color:var(--accent);font-weight:600}
-button:hover{filter:brightness(1.1)} button:disabled{opacity:.5;cursor:not-allowed}
+button:hover{filter:brightness(1.1)} button:disabled{opacity:.4;cursor:not-allowed}
 .bar{padding:12px 22px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--line)}
 select,input[type=text]{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:13px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;padding:18px 22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;padding:18px 22px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px;display:flex;flex-direction:column;gap:8px}
 .card.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 .top{display:flex;gap:8px;align-items:flex-start}
@@ -265,26 +286,29 @@ select,input[type=text]{background:var(--card);color:var(--text);border:1px soli
 .b{font-size:11px;padding:2px 8px;border-radius:20px;border:1px solid var(--line);color:var(--muted)}
 .b.lic{color:var(--ok);border-color:#1d5b46}
 .b.cat{color:var(--accent);border-color:#1d4f63}
+.b.wb{color:var(--ok);border-color:#1d5b46}
+.b.wb.off{color:var(--off);border-color:#33425a}
+.b.dsh{color:#f0abfc;border-color:#5b2a63}
+.b.dsh.off{color:var(--off);border-color:#33425a}
 .desc{font-size:12px;color:var(--muted);line-height:1.5;max-height:54px;overflow:hidden}
 .tags{font-size:11px;color:#7e8ea3}
 .act{margin-top:auto;display:flex;gap:8px}
 .act button{flex:1;padding:6px 0;font-size:12px}
 #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#0f2237;border:1px solid var(--ok);color:var(--text);padding:11px 18px;border-radius:11px;opacity:0;transition:.25s;pointer-events:none;z-index:9;max-width:80vw}
 #toast.show{opacity:1}
-a{color:var(--accent)}
 </style></head>
 <body>
 <header><h1>免费模型一键导入器</h1><span class="spacer"></span>
 <button id="refresh">↻ 刷新订阅</button></header>
 <div class="bar">
+<select id="filterPlat"><option value="">全部平台</option><option value="wb">仅 WorkBuddy 可用</option><option value="dsh">仅 DSH 可用</option></select>
 <select id="filterCat"><option value="">全部类型</option><option value="llm">语言</option><option value="image">图像</option><option value="audio">语音</option><option value="video">视频</option><option value="multimodal">多模态</option></select>
 <input type="text" id="search" placeholder="搜索名称 / 标签…" style="min-width:200px">
-<label style="font-size:13px;color:var(--muted)"><input type="checkbox" id="onlyImportable"> 仅可导入</label>
 <span class="spacer"></span>
 <span id="count" style="font-size:13px;color:var(--muted)"></span>
-<button id="selAll">全选</button>
+<button id="selAll">全选可见</button>
 <button id="importWB" class="primary">导入选中 → WorkBuddy</button>
-<button id="importDSH" class="primary">安装 → DSH</button>
+<button id="importDSH" class="primary">导入选中 → DSH</button>
 </div>
 <div class="grid" id="grid"></div>
 <div id="toast"></div>
@@ -293,29 +317,43 @@ let MODELS=[];
 const $=s=>document.querySelector(s);
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3200);}
 function render(){
-  const cat=$('#filterCat').value, q=$('#search').value.toLowerCase(), only=$('#onlyImportable').checked;
-  const list=MODELS.filter(m=>(!cat||m.category===cat)&&(!only||m.importable)&&(!q||(m.name+' '+m.tags.join(' ')).toLowerCase().includes(q)));
-  $('#count').textContent=`${list.length} / ${MODELS.length} 个模型`;
+  const plat=$('#filterPlat').value, cat=$('#filterCat').value, q=$('#search').value.toLowerCase();
+  const list=MODELS.filter(m=>(!plat||(plat==='wb'&&m.wb)||(plat==='dsh'&&m.dsh))&&(!cat||m.category===cat)&&(!q||(m.name+' '+m.tags.join(' ')).toLowerCase().includes(q)));
+  $('#count').textContent=`${list.length} / ${MODELS.length} 个`;
   $('#grid').innerHTML=list.map(m=>`
   <div class="card ${m._sel?'sel':''}" data-id="${m.id}">
     <div class="top"><input type="checkbox" class="cb" ${m._sel?'checked':''} data-id="${m.id}">
       <div class="name">${m.name}</div></div>
-    <div class="badges"><span class="b lic">${m.license}</span><span class="b cat">${m.category_cn}</span><span class="b">${m.source}</span>${m.importable?'':'<span class="b">不可直接导入</span>'}</div>
+    <div class="badges"><span class="b lic">${m.license}</span><span class="b cat">${m.category_cn}</span>
+      <span class="b wb ${m.wb?'':'off'}">WB${m.wb?' ✓':' ✗'}</span>
+      <span class="b dsh ${m.dsh?'':'off'}">DSH${m.dsh?' ✓':' ✗'}</span></div>
     <div class="desc">${m.description||'—'}</div>
-    <div class="tags">#${m.tags.slice(0,5).join(' #')||'—'}</div>
+    <div class="tags">${m.wb&&m.wb_via?'WB走'+m.wb_via+' · ':''}${m.dsh&&m.dsh_via?'DSH走'+m.dsh_via:''}</div>
+    <div class="act">
+      <button data-id="${m.id}" data-target="workbuddy" ${m.wb?'':'disabled'}>导入 WB</button>
+      <button data-id="${m.id}" data-target="dsh" ${m.dsh?'':'disabled'}>导入 DSH</button>
+    </div>
   </div>`).join('');
   document.querySelectorAll('.cb').forEach(c=>c.onchange=e=>{const m=MODELS.find(x=>x.id===e.target.dataset.id);m._sel=e.target.checked;e.target.closest('.card').classList.toggle('sel',m._sel);});
+  document.querySelectorAll('.act button').forEach(b=>b.onclick=e=>importOne(e.target.dataset.id,e.target.dataset.target));
 }
 async function load(){try{const r=await fetch('/api/models');const d=await r.json();MODELS=(d.models||[]).map(m=>Object.assign(m,{_sel:false}));render();}catch(e){toast('加载失败: '+e);}}
+async function importOne(id,target){
+  const btn=event.target; btn.disabled=true;
+  const r=await fetch('/api/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target,ids:[id]})});
+  const d=await r.json(); btn.disabled=false;
+  if(target==='workbuddy') toast(d.ok?`已导入 WorkBuddy（${d.added} 条）`:'失败: '+d.error);
+  else toast(d.ok?('DSH: '+(d.fcc==='skipped'?'FCC已存在':'FCC已注入')+(d.ollama?('，'+ (d.ollama==='skipped'?'Ollama已存在':'Ollama已注入')):'')):'失败: '+d.error);
+}
 $('#refresh').onclick=async()=>{toast('刷新中…');const r=await fetch('/api/refresh',{method:'POST'});const d=await r.json();toast(d.ok?`已刷新，共 ${d.count} 个`:'刷新失败');if(d.ok)load();};
-$('#filterCat').onchange=render;$('#search').oninput=render;$('#onlyImportable').onchange=render;
-$('#selAll').onclick=()=>{const cat=$('#filterCat').value,q=$('#search').value.toLowerCase(),only=$('#onlyImportable').checked;
-  MODELS.forEach(m=>{if((!cat||m.category===cat)&&(!only||m.importable)&&(!q||(m.name+' '+m.tags.join(' ')).toLowerCase().includes(q)))m._sel=true;});render();};
-$('#importWB').onclick=async()=>{const ids=MODELS.filter(m=>m._sel&&m.importable).map(m=>m.id);if(!ids.length){toast('请先勾选可导入的模型');return;}
+$('#filterPlat').onchange=render;$('#filterCat').onchange=render;$('#search').oninput=render;
+$('#selAll').onclick=()=>{MODELS.forEach(m=>m._sel=true);render();};
+$('#importWB').onclick=async()=>{const ids=MODELS.filter(m=>m._sel&&m.wb).map(m=>m.id);if(!ids.length){toast('请先勾选 WorkBuddy 可用的模型');return;}
   $('#importWB').disabled=true;const r=await fetch('/api/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:'workbuddy',ids})});const d=await r.json();
   $('#importWB').disabled=false;toast(d.ok?`已写入 WorkBuddy：${d.added} 条（保留其他 ${d.kept_other} 条）`:'导入失败: '+d.error);};
-$('#importDSH').onclick=async()=>{const r=await fetch('/api/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:'dsh'})});const d=await r.json();
-  toast(d.ok?(d.status==='skipped'?'DSH provider 已存在':'已注入 DSH provider，'+d.models+' 个模型'):'导入失败: '+d.error);};
+$('#importDSH').onclick=async()=>{const ids=MODELS.filter(m=>m._sel&&m.dsh).map(m=>m.id);if(!ids.length){toast('请先勾选 DSH 可用的模型');return;}
+  const r=await fetch('/api/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:'dsh',ids})});const d=await r.json();
+  toast(d.ok?('DSH: '+(d.fcc==='skipped'?'FCC已存在':'FCC已注入')+(d.ollama?('，'+(d.ollama==='skipped'?'Ollama已存在':'Ollama已注入')):'')):'导入失败: '+d.error);};
 load();
 </script></body></html>
 """

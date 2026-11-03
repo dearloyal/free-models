@@ -243,9 +243,24 @@ def filter_and_rank(entries):
 
 
 # ------------------------- 产出（影视仓风格订阅信封） -------------------------
+def classify(e):
+    """判断该免费模型分别能否导入 WorkBuddy / DSH，以及走哪种本地传输。"""
+    src = e.get("source")
+    url = e.get("url", "")
+    if src == "huggingface" and "huggingface.co/" in url:
+        # HF 权重：WorkBuddy/DSH 都通过本地 Ollama 的 OpenAI 兼容端点加载
+        return {"_wb": True, "_dsh": True, "_wb_via": "Ollama", "_dsh_via": "Ollama"}
+    if src == "freelist":
+        # 免费 API：WorkBuddy 走本地代理，DSH 走 FCC 聚合代理
+        return {"_wb": True, "_dsh": True, "_wb_via": "本地代理", "_dsh_via": "FCC 代理"}
+    # 其余（GitHub 仓库 / RSS / 文章）多为项目或资讯，不是可直接调用的模型端点
+    return {"_wb": False, "_dsh": False, "_wb_via": "", "_dsh_via": ""}
+
+
 def build_subscription(entries):
     sites = []
     for e in entries:
+        c = classify(e)
         sites.append({
             "key": e["id"],
             "name": e["name"],
@@ -260,6 +275,7 @@ def build_subscription(entries):
             "_source": e.get("source"),
             "_tags": (e.get("tags", []) or [])[:8],
             "_description": (e.get("description") or "")[:160],
+            **c,
         })
     return {
         "name": "免费模型",
@@ -279,7 +295,7 @@ def build_markdown(sub):
         "订阅链接（影视仓风格，可每日自动刷新）：",
         "",
         "```",
-        "https://raw.githubusercontent.com/dearloyal/CS/main/免费模型.json",
+        "https://raw.githubusercontent.com/dearloyal/free-models/main/免费模型.json",
         "```",
         "",
         "## 列表",
