@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-免费模型一键导入 (OW Bridge 风格极简版)
+免费模型一键导入 (直连云端版)
 
-用法 (任选其一):
-  python3 oneclick.py            # 把当天所有可用免费模型一键导入 WorkBuddy
-  python3 oneclick.py --dsh      # 导入到 DeepSeek Harness (DSH)
-  python3 oneclick.py --both     # WorkBuddy + DSH 都导入
-  python3 oneclick.py --list     # 只看分类，不导入
+用法:
+  python3 oneclick.py --key sk-or-v1-xxxx      # 导入 WorkBuddy（推荐，云端直连）
+  python3 oneclick.py --key sk-or-v1-xxxx --dsh # 同时导入 DSH
+  python3 oneclick.py --list                    # 只看真实免费模型，不导入
 
-数据来源: 优先用仓库里的 免费模型.json, 没有就联网拉最新订阅
-依赖: 仅 Python 标准库 (WorkBuddy 路径零依赖; DSH 路径也是纯文本注入)
-幂等: 重跑不会重复, 只动本工具标记的条目
+为什么需要 key:
+  OpenRouter 的免费模型是云端服务，必须用一个免费 API key 才能调用。
+  免费注册: https://openrouter.ai/keys  (无需信用卡, 1 分钟)
+  拿到后设置环境变量 OPENROUTER_API_KEY, 或用 --key 传入。
+  这是"能真正跑起来"的最省事方式: 不用显卡、不用装 Ollama/代理。
+
+数据来源: 仓库里的 免费模型.json (OpenRouter 官方 API 抓的真实模型)
+依赖: 仅 Python 标准库
+幂等: 重跑不会重复
 """
 import sys
 import os
@@ -24,12 +29,10 @@ LOCAL = HERE / "免费模型.json"
 SUB_URL = "https://raw.githubusercontent.com/dearloyal/free-models/main/%E5%85%8D%E8%B4%B9%E6%A8%A1%E5%9E%8B.json"
 
 OWNER = "free-models-importer"
-FCC_PORT = 8082
 OLLAMA_URL = "http://localhost:11434/v1"
-PROXY_URL = f"http://127.0.0.1:{FCC_PORT}/v1"
+OPENROUTER_BASE = "https://openrouter.ai/api/v1"
 
 
-# ----------------------------- 数据 -----------------------------
 def fetch():
     if LOCAL.exists():
         data = json.loads(LOCAL.read_text(encoding="utf-8"))
@@ -38,7 +41,7 @@ def fetch():
         try:
             req = urllib.request.Request(SUB_URL, headers={"User-Agent": "free-models-oneclick"})
             data = json.loads(urllib.request.urlopen(req, timeout=20).read().decode("utf-8"))
-            src = "远程订阅最新版"
+            src = "远程订阅"
         except Exception as e:
             print("✗ 无法获取订阅数据:", e)
             sys.exit(1)
@@ -47,44 +50,43 @@ def fetch():
     return data
 
 
-def slugify(s):
-    return "-".join("".join(c if c.isalnum() else "-" for c in s.lower()).split("-"))
-
-
 def classify(s):
+    """返回 (wb, dsh, provider, base_url, model)"""
     wb, dsh = s.get("_wb"), s.get("_dsh")
+    prov = s.get("_provider") or ""
+    base = s.get("_base_url") or ""
+    model = s.get("_model") or ""
     if wb is None or dsh is None:
         src = s.get("_source", "")
+        if src == "openrouter":
+            return True, True, "openrouter", OPENROUTER_BASE, model
         if src == "huggingface" and "huggingface.co/" in s.get("api", ""):
-            wb, dsh = True, True
-        elif src == "freelist":
-            wb, dsh = True, True
-        else:
-            wb, dsh = False, False
-    return bool(wb), bool(dsh)
+            return True, True, "ollama", OLLAMA_URL, ""
+        return False, False, "", "", ""
+    return bool(wb), bool(dsh), prov, base, model
 
 
 # ----------------------------- WorkBuddy -----------------------------
-def import_workbuddy(data):
-    entries = []
+def import_workbuddy(data, key):
+    entries, n_or = [], 0
     for s in data.get("sites", []):
-        wb, _ = classify(s)
+        wb, _, prov, base, model = classify(s)
         if not wb:
             continue
-        src = s.get("_source", "")
         name = s.get("name", "")
-        if src == "huggingface" and "huggingface.co/" in s.get("api", ""):
-            hf = s["api"].split("huggingface.co/")[-1].strip("/")
+        if prov == "openrouter":
+            mid = f"openrouter/{model}"
+            url, api_key, tool = OPENROUTER_BASE, key or "", True
+            n_or += 1
+        elif prov == "ollama":
+            hf = s.get("api", "").split("huggingface.co/")[-1].strip("/")
             mid = f"ollama/{hf.split('/')[-1]}"
-            url, key, tool = OLLAMA_URL, "ollama", False
-        elif src == "freelist":
-            mid = f"proxy/{slugify(name)}"
-            url, key, tool = PROXY_URL, "freecc", True
+            url, api_key, tool = OLLAMA_URL, "ollama", False
         else:
             continue
         entries.append({
-            "id": mid, "name": f"{name} (free-models)", "vendor": "Custom",
-            "url": url, "apiKey": key, "supportsToolCall": tool,
+            "id": mid, "name": f"{name} (free)", "vendor": "Custom",
+            "url": url, "apiKey": api_key, "supportsToolCall": tool,
             "supportsImages": False, "buddyBridgeOwner": OWNER,
         })
     target = os.environ.get("BUDDY_MODELS_FILE") or os.path.join(
@@ -101,36 +103,21 @@ def import_workbuddy(data):
     Path(target).write_text(json.dumps(
         {"models": merged, "availableModels": [m["id"] for m in merged]},
         ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"✓ WorkBuddy 导入 {len(entries)} 条 → {target}")
+    print(f"✓ WorkBuddy 写入 {len(entries)} 条 → {target}")
+    if n_or and not key:
+        print("  ⚠ 未提供 OpenRouter key，这些模型暂时调不通。")
+        print("    去 https://openrouter.ai/keys 免费创建，然后重跑:")
+        print("    python3 oneclick.py --key sk-or-v1-xxxx")
     return len(entries)
 
 
 # ----------------------------- DSH -----------------------------
-def _default_fcc_models(data):
-    models = [
-        ("gemini/models/gemini-3.1-flash-lite", "Gemini 3.1 Flash Lite (free)", 1048576, 65536),
-        ("open_router/openrouter/free", "OpenRouter Free (free)", 262144, 65536),
-        ("github_models/openai/gpt-4.1", "GitHub Models GPT-4.1 (free)", 262144, 65536),
-        ("groq/llama-3.3-70b-versatile", "Groq Llama 3.3 70B (free)", 131072, 32768),
-        ("nvidia_nim/nvidia/nemotron-3-super-120b-a12b", "NVIDIA NIM Nemotron 3 Super (free)", 200000, 65536),
-        ("zai_api/glm-4.7-flash", "GLM-4.7-Flash (free, 200K ctx)", 200000, 32768),
-    ]
-    seen = {m[0] for m in models}
-    for s in data.get("sites", []):
-        if s.get("_source") == "freelist":
-            mid = f"freeapi/{slugify(s['name'])}"
-            if mid not in seen:
-                seen.add(mid)
-                models.append((mid, f"{s['name']} (free-models)", 200000, 32768))
-    return models
-
-
-def _inject_dsh_provider(key, display, api, base_url, models, marker):
+def _inject_dsh_provider(key, display, api, base_url, api_key_env, models, marker):
     dsh_home = os.environ.get("DSH_HOME", os.path.expanduser("~/.dsh"))
     settings = os.path.join(dsh_home, "settings.yaml")
     os.makedirs(dsh_home, exist_ok=True)
     lines = [f"    # >>> {marker} >>>", f"    {key}:", f"      displayName: {display}",
-             f"      api: {api}", f"      baseURL: {base_url}", "      apiKeyEnv: FCC_DSH_API_KEY",
+             f"      api: {api}", f"      baseURL: {base_url}", f"      apiKeyEnv: {api_key_env}",
              "      retryPolicy:", "        mode: normal", "        maxRetries: 0", "      models:"]
     for mid, name, ctx, mtok in models:
         lines += [f"        - id: {mid}", f"          name: {name}",
@@ -156,21 +143,33 @@ def _inject_dsh_provider(key, display, api, base_url, models, marker):
 
 
 def import_dsh(data):
-    res = {}
-    res["fcc"] = _inject_dsh_provider(
-        "free-models", "Free Models (daily, API)", "openai-responses",
-        f"http://127.0.0.1:{FCC_PORT}/v1", _default_fcc_models(data), "free-models-provider")
-    hf = [s for s in data.get("sites", [])
-          if s.get("_source") == "huggingface" and "huggingface.co/" in s.get("api", "")]
-    if hf:
-        ollama_models = [(f"ollama/{s['name'].split('/')[-1]}", f"{s['name']} (HF·Ollama)", 128000, 4096) for s in hf]
-        res["ollama"] = _inject_dsh_provider(
-            "free-models-ollama", "Free Models (HF via Ollama)", "openai",
-            OLLAMA_URL, ollama_models, "free-models-ollama-provider")
-    return res
+    or_models = []
+    for s in data.get("sites", []):
+        _, dsh, prov, base, model = classify(s)
+        if dsh and prov == "openrouter" and model:
+            or_models.append((model, f"{model} (free)", s.get("_context_length") or 131072, 32768))
+    if not or_models:
+        print("  (订阅里暂无 OpenRouter 免费模型，DSH 跳过)")
+        return {}
+    status = _inject_dsh_provider(
+        "free-models", "Free Models (OpenRouter)", "openai", OPENROUTER_BASE,
+        "OPENROUTER_API_KEY", or_models, "free-models-provider")
+    print(f"✓ DSH provider {'已注入' if status == 'injected' else '已存在(跳过)'}"
+          f" → ~/.dsh/settings.yaml (key=free-models)")
+    print("  提示: DSH 从环境变量 OPENROUTER_API_KEY 读 key，请先 export 好。")
+    return {"dsh": status}
 
 
 # ----------------------------- 入口 -----------------------------
+def parse_key(args):
+    for i, a in enumerate(args):
+        if a == "--key" and i + 1 < len(args):
+            return args[i + 1]
+        if a.startswith("--key="):
+            return a.split("=", 1)[1]
+    return os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OPENROUTER_KEY")
+
+
 def main():
     args = sys.argv[1:]
     mode = "wb"
@@ -180,27 +179,25 @@ def main():
         mode = "both"
     if "--list" in args:
         mode = "list"
+    key = parse_key(args)
     data = fetch()
+
     if mode == "list":
-        wb = [s for s in data.get("sites", []) if classify(s)[0]]
-        dsh = [s for s in data.get("sites", []) if classify(s)[1]]
-        print(f"\nWorkBuddy 可用: {len(wb)} 个")
-        for s in wb[:8]:
-            print("  •", s.get("name"), "|", s.get("_license") or "未知")
-        print(f"\nDSH 可用: {len(dsh)} 个")
-        for s in dsh[:8]:
-            print("  •", s.get("name"), "|", s.get("_license") or "未知")
+        ors = [s for s in data.get("sites", []) if classify(s)[2] == "openrouter"]
+        hfs = [s for s in data.get("sites", []) if classify(s)[2] == "ollama"]
+        print(f"\nOpenRouter 真实免费模型: {len(ors)} 个（云端直连，需免费 key）")
+        for s in ors:
+            print("  •", s.get("_model"), f"| ctx {s.get('_context_length') or '?'}")
+        if hfs:
+            print(f"\nHugging Face 模型: {len(hfs)} 个（需本地 Ollama）")
+            for s in hfs[:8]:
+                print("  •", s.get("name"))
         return
+
     if mode in ("wb", "both"):
-        n = import_workbuddy(data)
-        print(f"  WorkBuddy 模型选择器现在会出现 {n} 个 free-models 模型")
+        import_workbuddy(data, key)
     if mode in ("dsh", "both"):
-        r = import_dsh(data)
-        fcc = "已注入" if r.get("fcc") == "injected" else "已存在(跳过)"
-        oll = ""
-        if "ollama" in r:
-            oll = "，Ollama " + ("已注入" if r["ollama"] == "injected" else "已存在(跳过)")
-        print(f"✓ DSH provider {fcc}{oll} → ~/.dsh/settings.yaml (key=free-models)")
+        import_dsh(data)
     print("\n完成。重跑幂等，不会重复写入。")
 
 

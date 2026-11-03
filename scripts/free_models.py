@@ -43,9 +43,7 @@ RSS_FEEDS = [
     "https://huggingface.co/blog/feed.xml",
     "https://github.com/atomlong/free-llm-api-resources/commits/main.atom",
 ]
-FREELIST_RAW = [
-    "https://raw.githubusercontent.com/atomlong/free-llm-api-resources/main/README.md",
-]
+OPENROUTER_API = "https://openrouter.ai/api/v1/models"
 GITHUB_QUERY = 'LLM OR "large language model" OR diffusion OR "speech recognition" OR multimodal'
 
 CFG_PATH = Path(__file__).resolve().parent.parent / "models_config.yaml"
@@ -58,7 +56,7 @@ if CFG_PATH.exists() and yaml:
         DAYS_LOOKBACK = o.get("days_lookback", DAYS_LOOKBACK)
         MAX_PER_SOURCE = o.get("max_per_source", MAX_PER_SOURCE)
         RSS_FEEDS = o.get("rss_feeds", RSS_FEEDS)
-        FREELIST_RAW = o.get("freelist_raw", FREELIST_RAW)
+        OPENROUTER_API = o.get("openrouter_api", OPENROUTER_API)
         GITHUB_QUERY = o.get("github_query", GITHUB_QUERY)
     except Exception as e:
         print("配置加载警告，使用默认值:", e)
@@ -180,22 +178,47 @@ def collect_rss():
     return out
 
 
-def collect_freelist():
+def collect_openrouter():
+    """从 OpenRouter 官方 API 拉真实免费模型（pricing=0 或 :free 后缀）。
+
+    这是唯一"能真正调用"的源：模型 ID 真实存在，直连云端即可用，
+    不依赖本地 Ollama/代理，也不需要显卡。
+    """
     out = []
-    for url in FREELIST_RAW:
-        try:
-            r = requests.get(url, timeout=20, headers=UA)
-            r.raise_for_status()
-            for m in re.finditer(r"\[([^\]]+)\]\((https?://[^)]+)\)", r.text):
-                name, link = m.group(1), m.group(2)
-                if any(b in name.lower() for b in ("api", "model", "llm", "free", "gpt", "diffusion", "tts")):
-                    out.append({
-                        "id": "freelist:" + link, "name": name[:120], "source": "freelist",
-                        "url": link, "category": _cat_for_text(name),
-                        "description": "来自免费模型清单",
-                    })
-        except Exception as e:
-            print(f"[freelist] {url} 失败: {e}")
+    try:
+        r = requests.get(OPENROUTER_API, timeout=25, headers=UA)
+        r.raise_for_status()
+        data = r.json().get("data", [])
+        for m in data:
+            mid = m.get("id", "")
+            pricing = m.get("pricing") or {}
+            zero = ("0", "0.0", "0.00", "0.000000")
+            is_free = str(pricing.get("prompt")) in zero and str(pricing.get("completion")) in zero
+            if not (is_free or mid.endswith(":free")):
+                continue
+            arch = m.get("architecture") or {}
+            modality = str(arch.get("modality", ""))
+            if "image" in modality:
+                cat = "image"
+            elif "audio" in modality:
+                cat = "audio"
+            else:
+                cat = "llm"
+            out.append({
+                "id": "openrouter:" + mid,
+                "name": mid,
+                "source": "openrouter",
+                "url": "https://openrouter.ai/api/v1",
+                "model": mid,
+                "category": cat,
+                "description": (m.get("description") or "")[:160],
+                "tags": [mid.split("/")[0], "free"],
+                "context_length": m.get("context_length"),
+                "license": "free",
+            })
+        print(f"[openrouter] 拉取 {len(data)} 个模型，其中免费 {len(out)} 个")
+    except Exception as e:
+        print(f"[openrouter] 失败: {e}")
     return out
 
 
@@ -205,6 +228,9 @@ def _norm(lic):
 
 
 def passes(e):
+    # OpenRouter 免费模型是"API 调用免费"，不适用开源许可证白名单，直接放行
+    if e.get("source") == "openrouter":
+        return True
     lic = _norm(e.get("license"))
     if lic is None:
         return True
@@ -244,17 +270,21 @@ def filter_and_rank(entries):
 
 # ------------------------- 产出（影视仓风格订阅信封） -------------------------
 def classify(e):
-    """判断该免费模型分别能否导入 WorkBuddy / DSH，以及走哪种本地传输。"""
+    """判断该免费模型分别能否导入 WorkBuddy / DSH，以及走哪种传输。"""
     src = e.get("source")
     url = e.get("url", "")
+    if src == "openrouter":
+        # 真实免费模型，直连 OpenRouter 云端（只需一个免费 key，无需本地代理/显卡）
+        return {"_wb": True, "_dsh": True, "_wb_via": "OpenRouter 云端",
+                "_dsh_via": "OpenRouter 云端", "_provider": "openrouter",
+                "_base_url": "https://openrouter.ai/api/v1", "_model": e.get("model")}
     if src == "huggingface" and "huggingface.co/" in url:
         # HF 权重：WorkBuddy/DSH 都通过本地 Ollama 的 OpenAI 兼容端点加载
-        return {"_wb": True, "_dsh": True, "_wb_via": "Ollama", "_dsh_via": "Ollama"}
-    if src == "freelist":
-        # 免费 API：WorkBuddy 走本地代理，DSH 走 FCC 聚合代理
-        return {"_wb": True, "_dsh": True, "_wb_via": "本地代理", "_dsh_via": "FCC 代理"}
+        return {"_wb": True, "_dsh": True, "_wb_via": "Ollama", "_dsh_via": "Ollama",
+                "_provider": "ollama", "_base_url": "http://localhost:11434/v1", "_model": None}
     # 其余（GitHub 仓库 / RSS / 文章）多为项目或资讯，不是可直接调用的模型端点
-    return {"_wb": False, "_dsh": False, "_wb_via": "", "_dsh_via": ""}
+    return {"_wb": False, "_dsh": False, "_wb_via": "", "_dsh_via": "",
+            "_provider": "", "_base_url": "", "_model": None}
 
 
 def build_subscription(entries):
@@ -275,6 +305,8 @@ def build_subscription(entries):
             "_source": e.get("source"),
             "_tags": (e.get("tags", []) or [])[:8],
             "_description": (e.get("description") or "")[:160],
+            "_model": e.get("model") or "",
+            "_context_length": e.get("context_length") or 0,
             **c,
         })
     return {
@@ -310,10 +342,8 @@ def build_markdown(sub):
 
 def main():
     all_e = []
-    all_e += collect_huggingface()
-    all_e += collect_github()
-    all_e += collect_rss()
-    all_e += collect_freelist()
+    all_e += collect_openrouter()   # 真实、可直接调用的免费模型（主源）
+    all_e += collect_huggingface()  # 真实模型 ID（需本地 Ollama 才能跑）
     print(f"[collect] 原始 {len(all_e)} 条")
 
     ranked = filter_and_rank(all_e)

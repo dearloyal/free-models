@@ -1,66 +1,75 @@
-# 免费模型订阅 · 每日自动更新
+# 免费模型 · 每日自动更新 + 一键导入
 
-每天 **北京时间 00:00**（UTC 16:00）自动全网检索最新发布的**免费模型**（LLM / 图像 / 语音 / 多模态），
-过滤许可证后，产出一份**可订阅的 JSON**——订阅链接每天自动刷新，模式与「影视仓订阅接口」一致。
+每天自动从 **OpenRouter 官方 API** 拉取**真实存在**的免费模型（`pricing=0` 或 `:free`），
+产出可订阅的 JSON；再用一条命令把这些模型**直连导入 WorkBuddy / DSH**，点一下就能用。
 
-## 订阅链接（每天自动更新）
+## 一句话用法
+
+```bash
+# 1) 拿一个免费 key（1 分钟，无需信用卡）: https://openrouter.ai/keys
+# 2) 一键导入 WorkBuddy
+python3 oneclick.py --key sk-or-v1-你的key
+```
+
+> **为什么需要 key？** OpenRouter 的免费模型是**云端服务**，必须用免费 API key 才能调用。
+> 好处是：不用显卡、不用装 Ollama / 本地代理，填个 key 就能跑。这是"真正能用"的最省事方式。
+
+## 订阅链接（每天自动刷新）
 
 ```
 https://raw.githubusercontent.com/dearloyal/free-models/main/免费模型.json
 ```
 
-> 部分订阅器对中文文件名敏感，等价 ASCII 形式：
-> `https://raw.githubusercontent.com/dearloyal/free-models/main/%E5%85%8D%E8%B4%B9%E6%A8%A1%E5%9E%8B.json`
+## 命令一览
 
-把它填进任何支持「订阅 / 接口 JSON」的客户端即可每日自动拉取最新免费模型清单。
+| 命令 | 作用 |
+|---|---|
+| `python3 oneclick.py --key sk-or-v1-xxx` | 导入全部免费模型到 **WorkBuddy** |
+| `python3 oneclick.py --key sk-or-v1-xxx --dsh` | 导入到 **DSH**（写入 `~/.dsh/settings.yaml`） |
+| `python3 oneclick.py --key sk-or-v1-xxx --both` | 两个都导 |
+| `python3 oneclick.py --list` | 只看有哪些真实免费模型，不写入 |
 
-## 数据格式（影视仓风格信封）
+也可用环境变量代替 `--key`：`export OPENROUTER_API_KEY=sk-or-v1-xxx` 后直接 `python3 oneclick.py`。
 
-```json
-{
-  "name": "免费模型",
-  "source": "dearloyal/CS",
-  "count": 37,
-  "updated_at": "2026-11-02T23:36:00+00:00",
-  "sites": [
-    {
-      "key": "hf:meta-llama/Llama-3.1-8B",
-      "name": "meta-llama/Llama-3.1-8B",
-      "api": "https://huggingface.co/meta-llama/Llama-3.1-8B",
-      "type": 1,
-      "_license": "apache-2.0",
-      "_category": "llm",
-      "_source": "huggingface",
-      "_tags": ["chat", "..."]
-    }
-  ]
-}
+## 一键安装（可选）
+
+macOS / Linux：
+```bash
+curl -fsSL https://raw.githubusercontent.com/dearloyal/free-models/main/install.sh | bash -s -- --key sk-or-v1-xxx
+```
+Windows PowerShell：
+```powershell
+irm https://raw.githubusercontent.com/dearloyal/free-models/main/install.ps1 | iex
+# 然后进入目录: cd $HOME\free-models; python oneclick.py --key sk-or-v1-xxx
 ```
 
-每个 `sites` 项即一个免费模型；自定义字段 `_license` / `_category` / `_source` / `_tags` 便于筛选。
+## 它到底做了什么
 
-## 数据来源
+1. `scripts/free_models.py` 调 `https://openrouter.ai/api/v1/models`，筛出 `pricing.prompt=0` 的**真实模型**（当前约 17 个），写入 `免费模型.json`。
+2. `oneclick.py` 读取该 JSON，把每个模型的 `base_url = https://openrouter.ai/api/v1` + 你的 key，写进：
+   - WorkBuddy：`~/.workbuddy/models.json`（`vendor:Custom` 条目，带 `buddyBridgeOwner` 标记）
+   - DSH：`~/.dsh/settings.yaml` 的 `free-models` provider（`apiKeyEnv: OPENROUTER_API_KEY`）
+3. 幂等：重跑只更新自己的条目，不会重复、不动你手动配的模型。
+
+## 数据来源（为什么现在是可信的）
 
 | 来源 | 说明 |
 |---|---|
-| Hugging Face Models API | 按创建时间取最新，按 `license` 过滤 |
-| GitHub Search API | 抓新发布的模型相关仓库（带 `GITHUB_TOKEN` 防限流） |
-| RSS / Atom | Hugging Face 博客、免费清单仓库的更新流 |
-| 现有免费清单 | 如 `free-llm-api-resources`（自动更新的免费 API 合集） |
+| **OpenRouter `/api/v1/models`** | 官方模型目录，返回真实模型 ID 与价格；筛 `pricing=0` 得真免费模型 |
 
-## 本地运行
+> 早期版本曾用正则从某 README 抓链接文本当模型名，导致出现 `deepseek-v4-flash` 等**并不存在的假模型**——已彻底移除，现只信官方 API。
+
+## 本地生成 / 调参
 
 ```bash
 pip install requests pyyaml
-python3 scripts/free_models.py      # 生成 免费模型.json / 免费模型.md 到仓库根
+python3 scripts/free_models.py        # 重新生成 免费模型.json / 免费模型.md
 ```
 
-## 调参
-
-编辑 `models_config.yaml`：修改 `days_lookback`（回溯天数）、许可证白/黑名单、RSS 源、GitHub 检索语句等，无需改代码。
+编辑 `models_config.yaml` 可调回溯天数、许可证白/黑名单、HF 源等。
 
 ## 重要提醒
 
-- **「免费」≠「可商用」**：本仓库按 `models_config.yaml` 的许可证白/黑名单过滤，请按你的用途自行复核。
-- **权重不存 GitHub**：模型权重走 Hugging Face Hub，运行时按需拉取。
-- **免费档会变**：厂商可能随时取消免费模型，因此流程设计为「每天刷新」而非「一劳永逸」。
+- **免费模型也会限流**：OpenRouter 免费档有速率限制，报 429 属正常，稍等或换模型。
+- **key 别提交到仓库**：`oneclick.py` 只在本地写进你的 harness 配置，不会上传。
+- **模型会变**：免费清单每天刷新，跑一次 `git pull` + `oneclick.py` 即可同步最新。

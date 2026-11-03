@@ -30,6 +30,7 @@ CONFIG_FILE = HERE / "importer_config.json"
 DEFAULTS = {
     "proxy_url": "http://127.0.0.1:8082/v1",   # API 类免费模型走 FCC 等本地代理
     "ollama_url": "http://localhost:11434/v1",  # HF 模型走本地 Ollama
+    "openrouter_key": "",                        # OpenRouter 免费模型云端直连 key
     "owner": "free-models-importer",
     "dsh_port": 8082,
 }
@@ -50,6 +51,12 @@ def save_config(cfg):
 
 
 def fetch_subscription(force=False):
+    local = HERE / "免费模型.json"
+    if not force and local.exists():
+        try:
+            return json.loads(local.read_text(encoding="utf-8"))
+        except Exception:
+            pass
     if not force and CACHE.exists():
         try:
             return json.loads(CACHE.read_text(encoding="utf-8"))
@@ -109,13 +116,13 @@ def import_workbuddy(ids, cfg):
     for s in chosen.values():
         src = s.get("_source", "")
         name = s.get("name", "")
-        if src == "huggingface" and "huggingface.co/" in s["api"]:
+        if src == "openrouter":
+            mid = f"openrouter/{s.get('_model') or name}"
+            url, key, tool = "https://openrouter.ai/api/v1", cfg.get("openrouter_key", ""), True
+        elif src == "huggingface" and "huggingface.co/" in s["api"]:
             hf = s["api"].split("huggingface.co/")[-1].strip("/")
             mid = f"ollama/{hf.split('/')[-1]}"
             url, key, tool = cfg["ollama_url"], "ollama", False
-        elif src == "freelist":
-            mid = f"proxy/{slugify(name)}"
-            url, key, tool = cfg["proxy_url"], "freecc", True
         else:
             continue
         entries.append({
@@ -139,31 +146,12 @@ def import_workbuddy(ids, cfg):
     return {"added": len(entries), "kept_other": len(kept), "path": target}
 
 
-def _default_fcc_models(data):
-    models = [
-        ("gemini/models/gemini-3.1-flash-lite", "Gemini 3.1 Flash Lite (free)", 1048576, 65536),
-        ("open_router/openrouter/free", "OpenRouter Free (free)", 262144, 65536),
-        ("github_models/openai/gpt-4.1", "GitHub Models GPT-4.1 (free)", 262144, 65536),
-        ("groq/llama-3.3-70b-versatile", "Groq Llama 3.3 70B (free)", 131072, 32768),
-        ("nvidia_nim/nvidia/nemotron-3-super-120b-a12b", "NVIDIA NIM Nemotron 3 Super (free)", 200000, 65536),
-        ("zai_api/glm-4.7-flash", "GLM-4.7-Flash (free, 200K ctx)", 200000, 32768),
-    ]
-    seen = {m[0] for m in models}
-    for s in data.get("sites", []):
-        if s.get("_source") == "freelist":
-            mid = f"freeapi/{slugify(s['name'])}"
-            if mid not in seen:
-                seen.add(mid)
-                models.append((mid, f"{s['name']} (free-models)", 200000, 32768))
-    return models
-
-
-def _inject_dsh_provider(cfg, key, display, api, base_url, models, marker):
+def _inject_dsh_provider(cfg, key, display, api, base_url, api_key_env, models, marker):
     dsh_home = os.environ.get("DSH_HOME", os.path.expanduser("~/.dsh"))
     settings = os.path.join(dsh_home, "settings.yaml")
     os.makedirs(dsh_home, exist_ok=True)
     lines = [f"    # >>> {marker} >>>", f"    {key}:", f"      displayName: {display}",
-             f"      api: {api}", f"      baseURL: {base_url}", "      apiKeyEnv: FCC_DSH_API_KEY",
+             f"      api: {api}", f"      baseURL: {base_url}", f"      apiKeyEnv: {api_key_env}",
              "      retryPolicy:", "        mode: normal", "        maxRetries: 0", "      models:"]
     for mid, name, ctx, mtok in models:
         lines += [f"        - id: {mid}", f"          name: {name}",
@@ -194,18 +182,18 @@ def _inject_dsh_provider(cfg, key, display, api, base_url, models, marker):
 def import_dsh(ids, cfg):
     data = fetch_subscription()
     sites = {s["key"]: s for s in data.get("sites", [])}
-    chosen = [sites[i] for i in ids if i in sites]
-    hf = [s for s in chosen if s.get("_source") == "huggingface" and "huggingface.co/" in s.get("api", "")]
-    res = {}
-    res["fcc"] = _inject_dsh_provider(
-        cfg, "free-models", "Free Models (daily, API)", "openai-responses",
-        f"http://127.0.0.1:{cfg['dsh_port']}/v1", _default_fcc_models(data), "free-models-provider")
-    if hf:
-        ollama_models = [(f"ollama/{s['name'].split('/')[-1]}", f"{s['name']} (HF·Ollama)", 128000, 4096) for s in hf]
-        res["ollama"] = _inject_dsh_provider(
-            cfg, "free-models-ollama", "Free Models (HF via Ollama)", "openai",
-            cfg["ollama_url"], ollama_models, "free-models-ollama-provider")
-    return res
+    chosen = [sites[i] for i in ids if i in sites] or list(sites.values())
+    or_models = []
+    for s in chosen:
+        if s.get("_source") == "openrouter" and s.get("_model"):
+            or_models.append((s["_model"], f"{s['_model']} (free)",
+                              s.get("_context_length") or 131072, 32768))
+    if not or_models:
+        return {"fcc": "skipped"}
+    st = _inject_dsh_provider(cfg, "free-models", "Free Models (OpenRouter)", "openai",
+                              "https://openrouter.ai/api/v1", "OPENROUTER_API_KEY",
+                              or_models, "free-models-provider")
+    return {"fcc": st}
 
 
 # ----------------------------- 路由 -----------------------------
